@@ -18,9 +18,9 @@ Person(user, "Пользователь")
 System_Ext(site_social, "Социальная сеть", "HTML, CSS, JavaScript, React", "Веб-интерфейс")
 
 System_Boundary(site_social, "Веб-сайт для общения") {
-   Container(user_service, "Сервис авторизации", "Python", "Сервис управления пользователями", $tags = "microService")    
-   Container(PtP_service, "Сервис сообщений чата", "Python", "Сервис управления сообщениями", $tags = "microService") 
-   Container(post_service, "Сервис стен", "Python", "Сервис управления стенами", $tags = "microService")   
+   Container(user_service, "Сервис авторизации", "С++", "Сервис управления пользователями", $tags = "microService")    
+   Container(PtP_service, "Сервис сообщений чата", "С++", "Сервис управления сообщениями", $tags = "microService") 
+   Container(post_service, "Сервис стен", "С++", "Сервис управления стенами", $tags = "microService")   
    ContainerDb(db, "База данных", "MySQL", "Хранение данных о стенах, сообщениях и пользователях", $tags = "storage")
    
 }
@@ -46,6 +46,9 @@ Rel(post_service, db, "INSERT/SELECT/UPDATE", "SQL")
 **API**:
 -	Создание нового пользователя
       - входные параметры: login, пароль, имя, фамилия, email, обращение (г-н/г-жа), дата регистрации
+      - выходные параметры: отсутствуют
+- Авторизация пользователя
+      - входные параметры: login, пароль
       - выходные параметры: отсутствуют
 -	Поиск пользователя по логину
      - входные параметры:  login
