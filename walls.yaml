@@ -1,0 +1,223 @@
+openapi: "3.0.0"
+info:
+    version: "1.0.0"
+    title: "Wals API"
+    description: Сервис стены в соцсети
+servers:
+    - url: http://localhost:8082
+      description: Сервер стен
+
+paths:
+    /walls:
+        post:
+            summary: Добавление записи на стену пользователя
+            parameters:
+                - name: user_id
+                  in: query
+                  description: Идентификатор создателя записи
+                  required: true
+                  schema:
+                      type: integer
+                - name: post_title
+                  in: query
+                  description: Заголовок записи
+                  required: true
+                  schema:
+                      type: string
+                - name: post_text
+                  in: query
+                  description: Содержание записи
+                  required: true
+                  schema:
+                      type: string                      
+                - name: date_created
+                  in: query
+                  description: Дата создания записи
+                  required: true
+                  schema:
+                      type: string
+                      format: string
+            responses:
+                "200":
+                    description: Ид записи
+                    content:
+                        application/json:
+                         schema:
+                          type: integer            
+                404:
+                    description: Ошибка записи на стену
+                    content:
+                        application/json:
+                         schema:
+                            $ref: '#/components/schemas/Error'
+                500:
+                    description: Неожиданная ошибка
+                    content:
+                        application/json:
+                         schema:
+                            $ref: '#/components/schemas/Error'
+        put:
+            summary: Изменение записи
+            parameters:
+                - name: post_id
+                  in: query
+                  description: Идентификатор записи
+                  required: true
+                  schema:
+                      $ref: '#/components/schemas/post_id'
+                - name: post_title
+                  in: query
+                  description: Заголовок записи
+                  required: true
+                  schema:
+                      type: string                
+                - name: post_text
+                  in: query
+                  description: Содержание записи
+                  required: true
+                  schema:
+                      type: string
+                - name: date_created
+                  in: query
+                  description: Дата изменения записи
+                  required: true
+                  schema:
+                      type: string
+                      format: date-time
+            responses:
+                "200":
+                    description: Запись изменена          
+                404:
+                    description: Ошибка изменения записи на стене
+                    content:
+                        application/json:
+                         schema:
+                            $ref: '#/components/schemas/Error'
+                500:
+                    description: Неожиданная ошибка
+                    content:
+                        application/json:
+                         schema:
+                            $ref: '#/components/schemas/Error'
+        delete:
+            summary: Удаление записи
+            parameters:
+                - name: post_id
+                  in: query
+                  description: Идентификатор записи
+                  required: true
+                  schema:
+                      $ref: '#/components/schemas/post_id'
+            responses:
+                "200":
+                    description: Запись успешно удалена
+                404:
+                    description: Ошибка удаления записи
+                    content:
+                        application/json:
+                         schema:
+                            $ref: '#/components/schemas/Error'
+                500:
+                    description: Неожиданная ошибка
+                    content:
+                        application/json:
+                         schema:
+                            $ref: '#/components/schemas/Error'
+        get:
+            summary: Получение списка записей на стене пользователя
+            parameters:
+                - name: user_id
+                  in: query
+                  description: Идентификатор стены(пользователя)
+                  required: true
+                  schema:
+                      type: integer
+            responses:
+                '200':
+                    description: Список записей успешно получен
+                    content:
+                     application/json:
+                      schema:
+                        $ref: '#/components/schemas/walls'   
+                404:
+                    description: Ошибка получения стены
+                    content:
+                        application/json:
+                         schema:
+                            $ref: '#/components/schemas/Error'
+                500:
+                    description: Неожиданная ошибка
+                    content:
+                        application/json:
+                         schema:
+                            $ref: '#/components/schemas/Error'                     
+    /walls/{post_id}:
+        get:
+            summary: Получение записи
+            parameters:
+                - name: post_id
+                  in: path
+                  description: Идентификатор записи
+                  required: true
+                  schema:
+                      $ref: '#/components/schemas/post_id'
+            responses:
+                '200':
+                    description: Запись успешно получена
+                    content:
+                     application/json:
+                      schema:
+                        $ref: '#/components/schemas/wall'                      
+                404:
+                    description: Ошибка получения записи
+                    content:
+                        application/json:
+                         schema:
+                            $ref: '#/components/schemas/Error'
+                500:
+                    description: Неожиданная ошибка
+                    content:
+                        application/json:
+                         schema:
+                            $ref: '#/components/schemas/Error'
+
+components:
+    schemas:
+        post_id:
+            type: integer
+            description: Уникальный идентификатор стены.        
+        walls:
+            type: array
+            items:
+                $ref: "#/components/schemas/wall"
+        wall:
+            type: object
+            required:
+                - id
+                - user_id
+                - post_text
+                - date_post
+            properties:
+             id:
+                 $ref: '#/components/schemas/post_id'   
+             user_id:
+                 type: integer
+             post_text:
+                 type: string
+             date_post:
+                 type: string                
+
+        Error:
+            type: object
+            required:
+                - message_error
+            properties:
+                message_error:
+                    description: Сообщение о ошибке
+                    type: string
+    securitySchemes:
+        basicAuth:
+            type: http
+            scheme: basic
+security:
+    - basicAuth: []
